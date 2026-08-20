@@ -11,8 +11,8 @@ El instalador coloca Clyra en `%LOCALAPPDATA%\Clyra` y agrega el comando `clyra`
 ## Requisitos
 
 - Windows 10/11 de 64 bits.
-- Python 3.10 o superior para el backend G4F.
-- `python -m pip install --user requests`.
+- No requiere Python: el backend G4F está integrado en `clyra.exe`.
+- Configura `G4F_API_KEY` o `%USERPROFILE%\\.config\\clyra\\credentials.json` si el proveedor lo solicita.
 
 ## Actualizaciones
 
