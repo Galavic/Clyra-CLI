@@ -25,4 +25,4 @@ async function main() {
   child.on("exit", (code, signal) => process.exitCode = signal ? 1 : (code ?? 1));
 }
 
-main().catch((error) => { console.error(`No se pudo iniciar Clyra: ${error.message}`); process.exitCode = 1; });
+main().catch((error) => { console.error(`Could not start Clyra: ${error.message}`); process.exitCode = 1; });

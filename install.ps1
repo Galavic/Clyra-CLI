@@ -21,7 +21,7 @@ $target = Join-Path $env:LOCALAPPDATA "Clyra"
 
 try {
     New-Item -ItemType Directory -Force -Path $temp | Out-Null
-    Write-Host "Descargando Clyra $version ($arch)..."
+    Write-Host "Downloading Clyra $version ($arch)..."
     Invoke-WebRequest -UseBasicParsing -Headers @{ "User-Agent" = "clyra-installer" } -Uri $url -OutFile $archive
 
     New-Item -ItemType Directory -Force -Path $target | Out-Null
@@ -31,8 +31,8 @@ try {
     $entries = @($path -split ";" | Where-Object { $_ -and $_.Trim() -and $_ -ne $target })
     [Environment]::SetEnvironmentVariable("Path", (($entries + $target) -join ";"), "User")
 
-    Write-Host "Clyra $version se instalo en $target"
-    Write-Host "Cierra y abre la terminal para usar: clyra"
+    Write-Host "Clyra $version was installed in $target"
+    Write-Host "Close and reopen your terminal, then run: clyra"
 }
 finally {
     Remove-Item -LiteralPath $temp -Recurse -Force -ErrorAction SilentlyContinue

@@ -1,10 +1,10 @@
 # clyra-cli
 
-Instala Clyra con:
+Install Clyra with:
 
 ```sh
 npm install -g clyra-cli
 ```
 
-El paquete descarga automáticamente el binario correspondiente a Windows,
-Linux o macOS y conserva las versiones en `~/.local/share/clyra-npm`.
+The package automatically downloads the matching binary for Windows, Linux,
+or macOS and keeps versions in `~/.local/share/clyra-npm`.

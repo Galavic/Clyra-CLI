@@ -23,7 +23,7 @@ async function download(url, destination) {
 function target() {
   const platform = process.platform === "win32" ? "windows" : process.platform;
   const arch = process.arch === "arm64" ? "arm64" : "x64";
-  if (!["win32", "linux", "darwin"].includes(process.platform)) throw new Error(`Sistema no compatible: ${process.platform}`);
+  if (!["win32", "linux", "darwin"].includes(process.platform)) throw new Error(`Unsupported system: ${process.platform}`);
   return { platform, arch, asset: platform === "windows" ? `clyra-windows-${arch}.zip` : `clyra-${platform}-${arch}.tar.gz` };
 }
 
@@ -35,7 +35,7 @@ async function install() {
   fs.mkdirSync(destination, { recursive: true });
   await download(`https://github.com/${repo}/releases/download/v${version}/${item.asset}`, archive);
   const result = spawnSync("tar", ["-xf", archive, "-C", destination], { stdio: "inherit", windowsHide: true });
-  if (result.status !== 0) throw new Error("No se pudo extraer el paquete de Clyra (se necesita tar).");
+  if (result.status !== 0) throw new Error("Could not extract the Clyra package (tar is required).");
   fs.unlinkSync(archive);
   const executable = path.join(destination, process.platform === "win32" ? "clyra.exe" : "clyra");
   fs.writeFileSync(path.join(root, "current.json"), JSON.stringify({ version, executable }, null, 2));
