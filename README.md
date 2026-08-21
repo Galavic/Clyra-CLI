@@ -1,16 +1,36 @@
 # Clyra CLI
 
-Distribución oficial del instalador de Clyra para Windows.
+Distribución oficial de Clyra para Windows, Linux y macOS.
 
 ## Descargar
 
-Descarga la versión más reciente desde [Releases](https://github.com/Galavic/Clyra-CLI/releases/latest).
+### Windows (PowerShell)
 
-El instalador coloca Clyra en `%LOCALAPPDATA%\Clyra` y agrega el comando `clyra` al `PATH` del usuario.
+```powershell
+powershell -ExecutionPolicy Bypass -c "irm https://raw.githubusercontent.com/Galavic/Clyra-CLI/main/install.ps1 | iex"
+```
+
+### Linux y macOS
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Galavic/Clyra-CLI/main/install.sh | sh
+```
+
+### npm
+
+```sh
+npm install -g clyra-cli
+```
+
+También puedes descargar los paquetes específicos desde
+[Releases](https://github.com/Galavic/Clyra-CLI/releases/latest).
+
+El script de Windows coloca Clyra en `%LOCALAPPDATA%\Clyra`; Linux y macOS usan
+`~/.local/share/clyra` y `~/.local/bin`.
 
 ## Requisitos
 
-- Windows 10/11 de 64 bits.
+- Windows 10/11, Linux o macOS (x64 o arm64).
 - No requiere Python: el backend G4F está integrado en `clyra.exe`.
 - Configura `G4F_API_KEY` o `%USERPROFILE%\\.config\\clyra\\credentials.json` si el proveedor lo solicita.
 
@@ -22,7 +42,8 @@ Desde una instalación existente puedes ejecutar:
 clyra update
 ```
 
-Cada release conserva la configuración y las sesiones del usuario.
+Cada release conserva la configuración y las sesiones del usuario. Las
+instalaciones por script y npm descargan la versión adecuada para el sistema.
 
 ## Licencia
 
