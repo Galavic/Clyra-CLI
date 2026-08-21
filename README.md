@@ -7,13 +7,13 @@ Distribución oficial de Clyra para Windows, Linux y macOS.
 ### Windows (PowerShell)
 
 ```powershell
-powershell -ExecutionPolicy Bypass -c "irm https://raw.githubusercontent.com/Galavic/Clyra-CLI/main/install.ps1 | iex"
+powershell -ExecutionPolicy Bypass -c "irm https://clyra-cli.xyz/install.ps1 | iex"
 ```
 
 ### Linux y macOS
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/Galavic/Clyra-CLI/main/install.sh | sh
+curl -fsSL https://clyra-cli.xyz/install.sh | sh
 ```
 
 ### npm
@@ -23,7 +23,7 @@ npm install -g clyra-cli
 ```
 
 También puedes descargar los paquetes específicos desde
-[Releases](https://github.com/Galavic/Clyra-CLI/releases/latest).
+[Descargas de Clyra](https://clyra-cli.xyz/download/latest).
 
 El script de Windows coloca Clyra en `%LOCALAPPDATA%\Clyra`; Linux y macOS usan
 `~/.local/share/clyra` y `~/.local/bin`.
