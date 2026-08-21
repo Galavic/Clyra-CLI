@@ -43,3 +43,10 @@ async function install() {
 }
 
 module.exports = { install, root };
+
+if (require.main === module) {
+  install().catch((error) => {
+    console.error(`Could not install Clyra: ${error.message}`);
+    process.exitCode = 1;
+  });
+}

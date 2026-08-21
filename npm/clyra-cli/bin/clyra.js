@@ -3,6 +3,7 @@ const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const { install, root } = require("../lib/install");
+const packageVersion = require("../package.json").version;
 
 async function main() {
   const version = (process.env.CLYRA_VERSION || "latest").replace(/^v/, "");
@@ -17,7 +18,9 @@ async function main() {
   if (!executable && version === "latest") {
     try {
       const current = JSON.parse(fs.readFileSync(path.join(cacheRoot, "current.json"), "utf8"));
-      if (current.executable && fs.existsSync(current.executable)) executable = current.executable;
+      if (current.version === packageVersion && current.executable && fs.existsSync(current.executable)) {
+        executable = current.executable;
+      }
     } catch {}
   }
   if (!executable) executable = await install();
