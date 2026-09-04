@@ -29,6 +29,9 @@ jobs:
             npm publish --access public --tag beta
           fi
       - name: Tag release as latest
+        # npm dist-tag no soporta OIDC: este paso falla en CI y el tag latest
+        # se mueve manual con: npm dist-tag add clyra-cli@<version> latest
+        continue-on-error: true
         working-directory: npm/clyra-cli
         run: |
           unset NODE_AUTH_TOKEN
