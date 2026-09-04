@@ -31,8 +31,7 @@ El script de Windows coloca Clyra en `%LOCALAPPDATA%\Clyra`; Linux y macOS usan
 ## Requisitos
 
 - Windows 10/11, Linux o macOS (x64 o arm64).
-- No requiere Python: el backend G4F está integrado en `clyra.exe`.
-- Configura `G4F_API_KEY` o `%USERPROFILE%\\.config\\clyra\\credentials.json` si el proveedor lo solicita.
+- Clyra usa la API de TUcloud configurada en `https://clix.tucloud.app/v1`.
 
 ## Actualizaciones
 
