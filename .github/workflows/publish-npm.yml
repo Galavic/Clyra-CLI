@@ -21,6 +21,9 @@ jobs:
         run: npm install -g npm@11
       - name: Publish launcher package
         working-directory: npm/clyra-cli
+        run: npm publish --access public --tag beta
+      - name: Tag release as latest
+        working-directory: npm/clyra-cli
         run: |
-          npm publish --access public --tag beta
+          unset NODE_AUTH_TOKEN
           npm dist-tag add clyra-cli@$(node -p "require('./package.json').version") latest
