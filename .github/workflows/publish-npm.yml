@@ -21,7 +21,13 @@ jobs:
         run: npm install -g npm@11
       - name: Publish launcher package
         working-directory: npm/clyra-cli
-        run: npm publish --access public --tag beta
+        run: |
+          VER=$(node -p "require('./package.json').version")
+          if npm view "clyra-cli@$VER" version >/dev/null 2>&1; then
+            echo "clyra-cli@$VER already on registry, skipping publish"
+          else
+            npm publish --access public --tag beta
+          fi
       - name: Tag release as latest
         working-directory: npm/clyra-cli
         run: |
