@@ -40,14 +40,10 @@ jobs:
             npm publish --access public --tag beta
           fi
       - name: Tag release as latest
-        # npm dist-tag no soporta OIDC: usa el secret NPM_TOKEN (token
-        # clásico tipo Automation, se crea una sola vez en npmjs.com).
-        # Sin secret, se omite y el tag latest se mueve manual con:
+        # Intenta mover latest con la sesión OIDC del publish (sin tokens).
+        # Si npm lo rechaza, se informa y latest se mueve manual con:
         # npm dist-tag add clyra-cli@<version> latest
         continue-on-error: true
         working-directory: npm/clyra-cli
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          if [ -z "$NODE_AUTH_TOKEN" ]; then echo "NPM_TOKEN no configurado, se omite latest"; exit 0; fi
-          npm dist-tag add "clyra-cli@$(node -p "require('./package.json').version")" latest
+          npm dist-tag add "clyra-cli@$(node -p "require('./package.json').version")" latest && echo "LATEST-MOVED" || echo "LATEST-SKIPPED"
