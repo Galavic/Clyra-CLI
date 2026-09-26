@@ -41,8 +41,15 @@ jobs:
           else
             npm publish --access public
           fi
-      - name: Tag release as beta
+      - name: Sync npm tags
+        # Mueve latest y beta con el secret NPM_TOKEN (token clásico
+        # Automation de npmjs, se crea una sola vez). Sin secret se omite.
         continue-on-error: true
         working-directory: npm/clyra-cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npm dist-tag add "clyra-cli@$(node -p "require('./package.json').version")" beta && echo "BETA-MOVED" || echo "BETA-SKIPPED"
+          if [ -z "$NODE_AUTH_TOKEN" ]; then echo "NPM_TOKEN ausente, se omite"; exit 0; fi
+          VER=$(node -p "require('./package.json').version")
+          npm dist-tag add "clyra-cli@$VER" latest
+          npm dist-tag add "clyra-cli@$VER" beta
