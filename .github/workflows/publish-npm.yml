@@ -31,19 +31,18 @@ jobs:
           node -e "const fs=require('fs');const j=JSON.parse(fs.readFileSync('package.json','utf8'));j.version=String(process.env.VER||'').replace(/^v/,'');fs.writeFileSync('package.json',JSON.stringify(j,null,2)+'\n')"
           node -p "require('./package.json').version"
       - name: Publish launcher package
+        # Sin --tag: npm pone latest automáticamente al publicar (vía OIDC,
+        # sin logins ni tokens). El tag beta se intenta mover aparte.
         working-directory: npm/clyra-cli
         run: |
           VER=$(node -p "require('./package.json').version")
           if npm view "clyra-cli@$VER" version >/dev/null 2>&1; then
             echo "clyra-cli@$VER already on registry, skipping publish"
           else
-            npm publish --access public --tag beta
+            npm publish --access public
           fi
-      - name: Tag release as latest
-        # Intenta mover latest con la sesión OIDC del publish (sin tokens).
-        # Si npm lo rechaza, se informa y latest se mueve manual con:
-        # npm dist-tag add clyra-cli@<version> latest
+      - name: Tag release as beta
         continue-on-error: true
         working-directory: npm/clyra-cli
         run: |
-          npm dist-tag add "clyra-cli@$(node -p "require('./package.json').version")" latest && echo "LATEST-MOVED" || echo "LATEST-SKIPPED"
+          npm dist-tag add "clyra-cli@$(node -p "require('./package.json').version")" beta && echo "BETA-MOVED" || echo "BETA-SKIPPED"
