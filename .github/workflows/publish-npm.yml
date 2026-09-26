@@ -19,6 +19,17 @@ jobs:
           registry-url: https://registry.npmjs.org
       - name: Update npm for trusted publishing
         run: npm install -g npm@11
+      - name: Sync package version from release tag
+        # En releases, la versión la manda el tag (vX.Y.Z): se escribe solo
+        # en el workspace del runner, sin tocar el repo. Así nunca hay que
+        # subir la versión a mano para publicar en npm.
+        if: github.event_name == 'release'
+        working-directory: npm/clyra-cli
+        env:
+          VER: ${{ github.event.release.tag_name }}
+        run: |
+          node -e "const fs=require('fs');const j=JSON.parse(fs.readFileSync('package.json','utf8'));j.version=String(process.env.VER||'').replace(/^v/,'');fs.writeFileSync('package.json',JSON.stringify(j,null,2)+'\n')"
+          node -p "require('./package.json').version"
       - name: Publish launcher package
         working-directory: npm/clyra-cli
         run: |
@@ -29,10 +40,13 @@ jobs:
             npm publish --access public --tag beta
           fi
       - name: Tag release as latest
-        # npm dist-tag no soporta OIDC: este paso falla en CI y el tag latest
-        # se mueve manual con: npm dist-tag add clyra-cli@<version> latest
-        continue-on-error: true
+        # npm dist-tag no soporta OIDC: usa el secret NPM_TOKEN (token
+        # clásico tipo Automation, se crea una sola vez en npmjs.com).
+        # Sin secret, se omite y el tag latest se mueve manual con:
+        # npm dist-tag add clyra-cli@<version> latest
+        if: secrets.NPM_TOKEN != ''
         working-directory: npm/clyra-cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          unset NODE_AUTH_TOKEN
-          npm dist-tag add clyra-cli@$(node -p "require('./package.json').version") latest
+          npm dist-tag add "clyra-cli@$(node -p "require('./package.json').version")" latest
