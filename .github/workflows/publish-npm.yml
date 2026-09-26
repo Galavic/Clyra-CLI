@@ -31,15 +31,17 @@ jobs:
           node -e "const fs=require('fs');const j=JSON.parse(fs.readFileSync('package.json','utf8'));j.version=String(process.env.VER||'').replace(/^v/,'');fs.writeFileSync('package.json',JSON.stringify(j,null,2)+'\n')"
           node -p "require('./package.json').version"
       - name: Publish launcher package
-        # Sin --tag: npm pone latest automáticamente al publicar (vía OIDC,
-        # sin logins ni tokens). El tag beta se intenta mover aparte.
+        # --tag latest es obligatorio: npm rechaza publicar cualquier version con
+        # prerelease (0.1.0-beta.N) sin --tag explicito. Se publica en `latest`
+        # para que `npm install -g clyra-cli` reciba el mismo binario que
+        # resuelven install.ps1 / install.sh via releases/latest.
         working-directory: npm/clyra-cli
         run: |
           VER=$(node -p "require('./package.json').version")
           if npm view "clyra-cli@$VER" version >/dev/null 2>&1; then
             echo "clyra-cli@$VER already on registry, skipping publish"
           else
-            npm publish --access public
+            npm publish --access public --tag latest
           fi
       - name: Sync npm tags
         # Mueve latest y beta con el secret NPM_TOKEN (token clásico
