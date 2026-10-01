@@ -31,13 +31,33 @@ async function install() {
   const version = (process.env.CLYRA_VERSION || (await json(`https://api.github.com/repos/${repo}/releases/latest`)).tag_name).replace(/^v/, "");
   const item = target();
   const destination = path.join(root, version, `${item.platform}-${item.arch}`);
-  const archive = path.join(os.tmpdir(), `clyra-${Date.now()}-${Math.random().toString(16).slice(2)}${item.asset.endsWith(".zip") ? ".zip" : ".tar.gz"}`);
-  fs.mkdirSync(destination, { recursive: true });
-  await download(`https://github.com/${repo}/releases/download/v${version}/${item.asset}`, archive);
-  const result = spawnSync("tar", ["-xf", archive, "-C", destination], { stdio: "inherit", windowsHide: true });
-  if (result.status !== 0) throw new Error("Could not extract the Clyra package (tar is required).");
-  fs.unlinkSync(archive);
   const executable = path.join(destination, process.platform === "win32" ? "clyra.exe" : "clyra");
+  // A clyra launched from this directory holds a lock on its own executable, so
+  // extracting over it fails on Windows with "Can't unlink already-existing
+  // object: Permission denied". If it is already there, reuse it: re-extracting
+  // an identical copy cannot improve anything and only risks the lock.
+  if (fs.existsSync(executable)) {
+    fs.mkdirSync(root, { recursive: true });
+    fs.writeFileSync(path.join(root, "current.json"), JSON.stringify({ version, executable }, null, 2));
+    return executable;
+  }
+  const archive = path.join(os.tmpdir(), `clyra-${Date.now()}-${Math.random().toString(16).slice(2)}${item.asset.endsWith(".zip") ? ".zip" : ".tar.gz"}`);
+  // Extract into a staging directory and copy in, so a failed run never leaves a
+  // half-written destination behind.
+  const staging = fs.mkdtempSync(path.join(os.tmpdir(), "clyra-stage-"));
+  try {
+    fs.mkdirSync(destination, { recursive: true });
+    await download(`https://github.com/${repo}/releases/download/v${version}/${item.asset}`, archive);
+    const result = spawnSync("tar", ["-xf", archive, "-C", staging], { stdio: "inherit", windowsHide: true });
+    if (result.status !== 0) throw new Error("Could not extract the Clyra package (tar is required).");
+    for (const name of fs.readdirSync(staging)) {
+      fs.copyFileSync(path.join(staging, name), path.join(destination, name));
+    }
+  } finally {
+    fs.rmSync(archive, { force: true });
+    fs.rmSync(staging, { recursive: true, force: true });
+  }
+  if (!fs.existsSync(executable)) throw new Error(`The Clyra package did not contain ${path.basename(executable)}.`);
   fs.writeFileSync(path.join(root, "current.json"), JSON.stringify({ version, executable }, null, 2));
   return executable;
 }
