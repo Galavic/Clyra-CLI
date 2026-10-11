@@ -36,9 +36,13 @@ jobs:
           asset="clyra-${platform}-${arch}.${extension}"
           gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "$asset" --dir artifacts
           mkdir smoke
-          tar -xf "artifacts/$asset" -C smoke
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            powershell.exe -NoProfile -Command "Expand-Archive -LiteralPath 'artifacts/$asset' -DestinationPath smoke"
+          else
+            tar -xf "artifacts/$asset" -C smoke
+          fi
           if [ "$RUNNER_OS" != "Windows" ]; then test -x "smoke/$binary"; fi
-          version=$("./smoke/$binary" --version)
+          version=$("./smoke/$binary" --version | tr -d '\r')
           test "$version" = "${TAG#v}"
           "./smoke/$binary" --help > cli-help.txt 2>&1
           grep -q login cli-help.txt
