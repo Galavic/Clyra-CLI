@@ -40,7 +40,7 @@ jobs:
           if [ "$RUNNER_OS" != "Windows" ]; then test -x "smoke/$binary"; fi
           version=$("./smoke/$binary" --version)
           test "$version" = "${TAG#v}"
-          "./smoke/$binary" --help > cli-help.txt
+          "./smoke/$binary" --help > cli-help.txt 2>&1
           grep -q login cli-help.txt
           grep -q logout cli-help.txt
           echo "Verified $platform/$arch: $version"
