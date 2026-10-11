@@ -3,7 +3,6 @@ const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const { install, root } = require("../lib/install");
-const packageVersion = require("../package.json").version;
 
 async function main() {
   const version = (process.env.CLYRA_VERSION || "latest").replace(/^v/, "");
@@ -15,10 +14,16 @@ async function main() {
     : path.join(home, ".local", "share", "clyra-npm");
   const candidate = version === "latest" ? null : path.join(root, version, `${platform}-${arch}`, process.platform === "win32" ? "clyra.exe" : "clyra");
   let executable = candidate && fs.existsSync(candidate) ? candidate : null;
-  if (!executable && version === "latest") {
+  if (!executable) {
     try {
       const current = JSON.parse(fs.readFileSync(path.join(cacheRoot, "current.json"), "utf8"));
-      if (current.version === packageVersion && current.executable && fs.existsSync(current.executable)) {
+      // The npm package version and the extracted binary version move on
+      // independent tracks: the published clyra-cli is 0.1.0-beta.20 while the
+      // extracted binary is whatever the last release was. Requiring them to be
+      // equal meant the cache was never reused, so every launch re-extracted.
+      // Re-extracting over a clyra that is already running fails on Windows,
+      // because its own clyra.exe is locked.
+      if (current.executable && fs.existsSync(current.executable)) {
         executable = current.executable;
       }
     } catch {}
