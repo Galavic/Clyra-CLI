@@ -31,7 +31,11 @@ El script de Windows coloca Clyra en `%LOCALAPPDATA%\Clyra`; Linux y macOS usan
 ## Requisitos
 
 - Windows 10/11, Linux o macOS (x64 o arm64).
-- Clyra usa la API de TUcloud configurada en `https://clix.tucloud.app/v1`.
+- Inicia sesión con la misma cuenta de Clyra ADE. Usa `clyra login`,
+  `clyra logout` y `clyra whoami`, o los comandos `/login`, `/logout` y
+  `/whoami` dentro del CLI.
+- Los modelos se ejecutan directamente mediante Zen. Worm requiere una sesión
+  válida y descarga sus instrucciones del servicio de Clyra.
 
 ## Actualizaciones
 
