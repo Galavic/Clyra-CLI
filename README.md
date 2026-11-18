@@ -31,6 +31,10 @@ El script de Windows coloca Clyra en `%LOCALAPPDATA%\Clyra`; Linux y macOS usan
 ## Requisitos
 
 - Windows 10/11, Linux o macOS (x64 o arm64).
+- En x64 hace falta una CPU con SSE4.2 (2008 o posterior). El paquete de
+  Windows no necesita AVX2, así que funciona en Sandy/Ivy Bridge y en VMs sin
+  passthrough de AVX2. Si tu CPU es Haswell o más nueva y quieres la variante
+  AVX2, usa `clyra-windows-x64-avx2.zip`.
 - Inicia sesión con la misma cuenta de Clyra ADE. Usa `clyra login`,
   `clyra logout` y `clyra whoami`, o los comandos `/login`, `/logout` y
   `/whoami` dentro del CLI.
